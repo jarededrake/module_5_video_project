@@ -46,7 +46,7 @@
         <main>
             <h1 class="text-center">Courses</h1>
             <section>
-                <a href="/course/create" class="btn btn-warning ">Create Course</a>
+                <a href="/views/create-course" class="btn btn-warning ">Create Course</a>
                 <form class="search float-right">
                     <label>Search: </label>
                     <input type="text">
@@ -60,16 +60,16 @@
                         <% for (var i = 0; i < courses.length; i++) { %>
                         <div class="card mb-4">
                             <img class="card-img-top"
-                                src="courses[i].imageURL"
-                                alt="Card image cap" width="400">
+                                style="background-image: url('<%= courses[i].image %>')" 
+                                alt="Need to make images fit properly inside div" width="400">
                             <div class="card-body">
                                 <h4 class="card-title">
                                     <%= courses[i].title %>
                                 </h4>
                             </div>
                             <div class="card-footer">
-                                <a href=""><button type="button" class="btn btn-info">Details</button></a>
-                                <small class="float-right">Date...</small>
+                                <a href="/course-details/<%= courses[i]._id %>"><button type="button" class="btn btn-info">Details</button></a>
+                                <small class="float-right"><%= courses[i].datePosted.toDateString() %></small>
                             </div>
                         </div>
                         <% } %>

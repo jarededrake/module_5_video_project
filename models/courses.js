@@ -4,9 +4,13 @@ const Schema = mongoose.Schema;
 const CourseSchema = new Schema ({
      title: String,
      description: String,
-     imageURL: String,
+     image: String,
      isPublic: false,
-     createdAt: String,
+     datePosted: {
+        type: Date,
+        default: new Date(),
+        //figure out the time stamp
+     },
  })
 
  const Courses = mongoose.model("Courses", CourseSchema);
