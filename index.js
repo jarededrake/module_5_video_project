@@ -16,10 +16,6 @@ mongoose.connect("mongodb://localhost/courses_database", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-// mongoose.createConnection("mongodb://localhost/users_database", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// })
 
 app.set("view engine", "ejs")
 app.use(express.static("static"))

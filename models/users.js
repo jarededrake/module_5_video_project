@@ -4,9 +4,10 @@ const bcrypt = require("bcrypt")
 
 const UsersSchema = new Schema ({
      username: {
-         type: String,
-         required: true,
-         unique: true,
+        type: String,
+        required: true,
+        useCreateIndex: true,
+        autoIndex: true,
      },
      password: {
          type: String,
