@@ -21,19 +21,11 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Welcome, {{username}}</a>
+                    <a class="nav-link" href="#">Welcome, <%= username %></a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Login</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Register</a>
+                    <a class="nav-link" href="/auth/logout">Logout</a>
                 </li>
 
             </ul>
@@ -62,9 +54,9 @@
 
                         <a class="btn btn-danger" href="/">Delete</a>
                         <a class="btn btn-warning" href="/">Edit</a>
-                        <span class="enrolled-span">You are already enrolled</span>
+                        <!--<span class="enrolled-span">You are already enrolled</span>
                         <a class="btn btn-primary" href="/">Enroll</a>
-
+                        -->
                     </div>
                 </div>
             </div>
@@ -74,6 +66,10 @@
             <div class="footer-copyright text-center py-3">© 2019
                 <a href="#/">Express Fundamentals</a>
             </div>
+            <script src="/jQuery/jquery-3.5.1.js"></script>
+            <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+            <script src="/notifyJS/notify.js"></script>
         </footer>
 
     </div>

@@ -7,8 +7,7 @@ const UsersSchema = new Schema ({
      username: {
         type: String,
         required: true,
-        useCreateIndex: true,
-        autoIndex: true,
+        unique: true,
      },
      password: {
          type: String,

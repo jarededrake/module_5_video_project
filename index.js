@@ -1,14 +1,13 @@
 /*
 TO DOS:
--> Figure out why mongoDB is allowing more than one of the same user name
--> Once we figure out the above, when an error is through re route them back to register 
--> Prevent login/register if logged in
-
--> Display the courses the user is registered for 
--> Display the user name in nav bar
+-> Link user id and courses they created so it only shows the courses of the person logged in
 -> Make pictures fit properly in div on user home page
 -> Fix course details page
 -> Check to see if there are courses, if there are display courses, if not display "no courses"
+-> Delete course
+-> Edit course
+-> Better way to display notifications?
+-> Validate passwords
 */
 
 const express = require("express");
@@ -24,6 +23,7 @@ const bcrypt = require("bcrypt");
 const expressionSession = require("express-session");
 const authMiddleware = require("./middlweare/authMiddleware")
 const logoutController = require("./controllers/logout")
+const notifier = require("node-notifier");
 
 app.use(expressionSession({
     secret: "keyboard cat",
@@ -38,6 +38,7 @@ app.use(express.static("public"))
 mongoose.connect("mongodb://localhost/courses_database", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    autoIndex: true,
 })
 
 app.set("view engine", "ejs")
@@ -47,11 +48,12 @@ app.listen(3000, () => {
     console.log("app listening on port 3000")
 })
 app.get("/", async (req, res) => {
-    if(req.session.userId) {
+    if(req.session.user) {
     const courses = await Courses.find({});
     console.log(req.session.userId)
     res.render("user-home", {
-        courses
+        courses,
+        username: req.session.user.username,
     });
     } else {
         res.redirect("guest-home")
@@ -61,20 +63,32 @@ app.get("/guest-home", (req, res) => {
     res.render("guest-home")
 })
 app.get("/course-details", (req, res) => {
+    if(req.secret.user) {
     res.render("course-details")
+    } else {
+        res.redirect("guest-home")
+    }
 })
-app.get('/course-details/:id',async (req,res)=>{        
+app.get('/course-details/:id',async (req,res)=>{ 
+    if(req.session.user) {       
     const courseDetails = await Courses.findById(req.params.id)
     res.render('course-details',{
-        courseDetails
+        courseDetails,
+        username: req.session.user.username,
     });    
+    } else {
+        res.redirect("guest-home")
+    }
 })
 
 app.get("/create-course", (req, res) => {
-    if(req.session.userId) {
-        return res.render("create-course") //need to look back at implementing this, if there is no user id then they cannot create a post
-    }
-    res.render("create-course")
+   if(req.session.user) {
+       res.render("create-course", {
+        username: req.session.user.username,
+       })
+   } else {
+       res.redirect("guest-home")
+   }
 })
 
 app.get("/edit-course", (req, res) => {
@@ -91,7 +105,7 @@ app.post("/posts/store", async (req, res) => {
     image.mv(path.resolve(__dirname, "public/img", image.name), async (error) => {
         await Courses.create({
             ...req.body,
-            image:"/img/" + image.name
+            image:"/img/" + image.name,
             })
         res.redirect("/")
     })
@@ -99,10 +113,22 @@ app.post("/posts/store", async (req, res) => {
 app.post("/users/register", (req, res) => {
     Users.create(req.body, (error, user) => {
         console.log(error);
-        if(error) {
-            return res.redirect("/users/register")
+        if(error) {notifier.notify({
+            title: "Notification",
+            message: "Username already exists",
+            sound: true,
+            timeout: 5000,
+        })
+            return res.redirect("/guest-home")
+        } else {
+        notifier.notify({
+            title: "Notification",
+            message: "Thank you for registering, please login to continue",
+            sound: true,
+            timeout: 5000,
+        })
+        res.redirect("/login");
         }
-        res.redirect("/");
     })
 })
 app.post("/users/login", (req, res) => {
@@ -112,7 +138,7 @@ app.post("/users/login", (req, res) => {
         if(user) {
             bcrypt.compare(password, user.password, (error, same) => {
                 if(same) {
-                    req.session.userId = user._id
+                    req.session.user = user
                     res.redirect("/")
                 }
                 else {
