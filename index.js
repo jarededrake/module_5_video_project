@@ -23,7 +23,7 @@ const bcrypt = require("bcrypt");
 const expressionSession = require("express-session");
 const authMiddleware = require("./middlweare/authMiddleware")
 const logoutController = require("./controllers/logout")
-const notifier = require("node-notifier");
+
 
 app.use(expressionSession({
     secret: "keyboard cat",
@@ -49,12 +49,12 @@ app.listen(3000, () => {
 })
 app.get("/", async (req, res) => {
     if(req.session.user) {
-    const courses = await Courses.find({});
-    console.log(req.session.userId)
+    const courses = await Courses.find({})
     res.render("user-home", {
         courses,
         username: req.session.user.username,
     });
+    
     } else {
         res.redirect("guest-home")
     }
@@ -103,37 +103,25 @@ app.get("/register", (req, res) => {
 app.post("/posts/store", async (req, res) => {
     let image = req.files.image;
     image.mv(path.resolve(__dirname, "public/img", image.name), async (error) => {
-        await Courses.create({
+        const course = await Courses.create({
             ...req.body,
             image:"/img/" + image.name,
+            creatorID: req.session.user._id,
             })
         res.redirect("/")
     })
 })
 app.post("/users/register", (req, res) => {
     Users.create(req.body, (error, user) => {
-        console.log(error);
-        if(error) {notifier.notify({
-            title: "Notification",
-            message: "Username already exists",
-            sound: true,
-            timeout: 5000,
-        })
+        if(error) {
             return res.redirect("/guest-home")
         } else {
-        notifier.notify({
-            title: "Notification",
-            message: "Thank you for registering, please login to continue",
-            sound: true,
-            timeout: 5000,
-        })
         res.redirect("/login");
         }
     })
 })
 app.post("/users/login", (req, res) => {
     const {username, password} = req.body;
-
     Users.findOne({username:username}, (error,user) => {
         if(user) {
             bcrypt.compare(password, user.password, (error, same) => {
@@ -164,6 +152,11 @@ app.use((req, res) => res.render("notfound"));
 // app.get("/course-details", courseDetailsController);
 // app.get("/create-course", createCourseController);
 
+// const user = await Users.find({username: req.session.user.username})
+    // const courses = await Courses.find({_id: {$in: user.courses}});
+    // console.log(courses)
+    // console.log(user)
+    // console.log(req.session.userId)
 
 
 

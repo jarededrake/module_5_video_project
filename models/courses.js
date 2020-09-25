@@ -11,6 +11,10 @@ const CourseSchema = new Schema ({
         default: new Date(),
         //figure out the time stamp
      },
+     creatorID: {
+        type: Schema.Types.ObjectId,
+        ref: "Users",
+     }
  })
 
  const Courses = mongoose.model("Courses", CourseSchema);

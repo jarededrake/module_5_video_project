@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt")
-const currentEnrolledCourses = require("./courses")
 
 const UsersSchema = new Schema ({
      username: {
@@ -12,6 +11,10 @@ const UsersSchema = new Schema ({
      password: {
          type: String,
          required: true,
+     },
+     courses: {
+        type: [String],
+        default: [],
      }
  });
 
