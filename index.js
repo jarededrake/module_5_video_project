@@ -42,7 +42,7 @@ mongoose.connect("mongodb://localhost/courses_database", {
 })
 
 app.set("view engine", "ejs")
-app.use(express.static("static"))
+app.use(express.static("public"))
 
 app.listen(3000, () => {
     console.log("app listening on port 3000")
