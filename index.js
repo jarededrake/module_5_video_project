@@ -49,7 +49,9 @@ app.listen(3000, () => {
 })
 app.get("/", async (req, res) => {
     if(req.session.user) {
-    const courses = await Courses.find({})
+    const id = req.session.user._id
+    const courses = await Courses.find({creatorID: id})
+    console.log(courses)
     res.render("user-home", {
         courses,
         username: req.session.user.username,
@@ -103,7 +105,7 @@ app.get("/register", (req, res) => {
 app.post("/posts/store", async (req, res) => {
     let image = req.files.image;
     image.mv(path.resolve(__dirname, "public/img", image.name), async (error) => {
-        const course = await Courses.create({
+        await Courses.create({
             ...req.body,
             image:"/img/" + image.name,
             creatorID: req.session.user._id,
