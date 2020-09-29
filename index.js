@@ -50,7 +50,7 @@ app.listen(3000, () => {
 app.get("/", async (req, res) => {
     if(req.session.user) {
     const id = req.session.user._id
-    const courses = await Courses.find({creatorID: id})
+    const courses = await Courses.find({creatorID: id}).lean()
     console.log(courses)
     res.render("user-home", {
         courses,
