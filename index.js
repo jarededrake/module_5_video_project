@@ -1,14 +1,4 @@
-/*
-TO DOS:
--> Link user id and courses they created so it only shows the courses of the person logged in
--> Make pictures fit properly in div on user home page
--> Fix course details page
--> Check to see if there are courses, if there are display courses, if not display "no courses"
--> Delete course
--> Edit course
--> Better way to display notifications?
--> Validate passwords
-*/
+//This is the last commit
 
 const express = require("express");
 const app = new express();
