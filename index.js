@@ -93,19 +93,19 @@ app.get("/create-course", (req, res) => {
    }
 })
 
-app.get("/edit-course", (req, res) => {
-    if(req.session.user) {
-        res.render("edit-course", {
-            username: req.session.user.username,
-        })
-    } else {
-        res.render("guest-home")
-    }
-})
+// app.get("/edit-course", (req, res) => {
+//     if(req.session.user) {
+//         res.render("edit-course", {
+//             username: req.session.user.username,
+//         })
+//     } else {
+//         res.render("guest-home")
+//     }
+// })
 app.get('/edit-course/:id', async (req, res) => {
     if(req.session.user) {       
         const courseDetails = await Courses.findById(req.params.id)
-        res.render('course-details',{
+        res.render('edit-course',{
             courseDetails,
             username: req.session.user.username,
         });    
@@ -113,10 +113,10 @@ app.get('/edit-course/:id', async (req, res) => {
             res.redirect("guest-home")
         }
 })
-app.post("/update-course",(req, res) => {
+app.post("/update-course/:id",(req, res) => {
     Courses.findByIdAndUpdate(req.params.id, req.body, (error,courseDetails) => {
             if(error) throw error
-            else res.redirect('/user-home')
+            else res.redirect('/')
     })
 });
 app.get("/login", (req, res) => {
@@ -164,8 +164,13 @@ app.post("/users/login", (req, res) => {
         }
     })
 })
-app.post("/update-course", (req, res) => {
-    
+app.get("/delete/:id", async (req, res)=>{
+    console.log(req.params.id);
+    await Courses.findByIdAndDelete(req.params.id, (error) => {
+        if(error) throw error
+        else res.redirect("/")
+        //notify('Successfully Deleted Course', 'success', context)
+    })
 })
 
 
