@@ -94,8 +94,31 @@ app.get("/create-course", (req, res) => {
 })
 
 app.get("/edit-course", (req, res) => {
-    res.render("edit-course")
+    if(req.session.user) {
+        res.render("edit-course", {
+            username: req.session.user.username,
+        })
+    } else {
+        res.render("guest-home")
+    }
 })
+app.get('/edit-course/:id', async (req, res) => {
+    if(req.session.user) {       
+        const courseDetails = await Courses.findById(req.params.id)
+        res.render('course-details',{
+            courseDetails,
+            username: req.session.user.username,
+        });    
+        } else {
+            res.redirect("guest-home")
+        }
+})
+app.post("/update-course",(req, res) => {
+    Courses.findByIdAndUpdate(req.params.id, req.body, (error,courseDetails) => {
+            if(error) throw error
+            else res.redirect('/user-home')
+    })
+});
 app.get("/login", (req, res) => {
     res.render("login")
 })
@@ -141,6 +164,10 @@ app.post("/users/login", (req, res) => {
         }
     })
 })
+app.post("/update-course", (req, res) => {
+    
+})
+
 
 app.get("/auth/logout", logoutController);
 app.use((req, res) => res.render("notfound"));
